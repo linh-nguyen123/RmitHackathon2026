@@ -1,0 +1,19 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Environment
+.env
+venv/
+env/
+
+# Data & Model weights (không push lên github, chỉ để trên Kaggle)
+*.csv
+*.parquet
+*.jsonl
+*.pt
+*.bin
+*.safetensors
+*.onnx

@@ -1,0 +1,19 @@
+# RMIT Hackathon 2026 - Dependencies & Environment Setup
+# PyTorch and CUDA (Recommended: torch>=2.0.0 with CUDA 11.8 or 12.1)
+torch>=2.0.0
+transformers>=4.36.0
+accelerate>=0.25.0
+
+# Scientific & Evaluation Libraries
+scikit-learn>=1.3.0
+pandas>=2.0.0
+numpy>=1.24.0
+scipy>=1.11.0
+
+# Text Processing & Utilities
+regex>=2023.10.3
+tqdm>=4.66.0
+
+# Optional Vietnamese Segmenters (Fallback provided if absent)
+pyvi>=0.1.1
+# underthesea>=6.8.0

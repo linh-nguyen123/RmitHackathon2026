@@ -299,13 +299,3 @@ pytest tests/ -v
 2. **Kiến Trúc Huấn Luyện 5-Fold Chống Overfit**: Kết hợp **Mean Pooling** và **Multi-Sample Dropout** (5 dropout masks song song) giúp ổn định gradient, tăng tốc hội tụ và ngăn ngừa hiện tượng "rớt hạng" giữa Public LB và Private LB.
 3. **Cơ Chế Offline Hoàn Toàn 100%**: Sẵn sàng cho luật thi ngặt nghèo của Kaggle Code Competition (tắt internet khi submit notebook), kèm thuật toán Forward Maximum Matching thuần Python tự phục hồi khi không có thư viện ngoài.
 4. **Bộ Phân Tích Độ Bền Vững (ASR Benchmark)**: Đo lường khách quan độ sụt giảm ROC-AUC và tỷ lệ né tránh (ASR) trước và sau khi bị tấn công đối kháng, chứng minh tính tin cậy cao của giải pháp trước Ban Giám Khảo.
-
----
-
-## 📋 Checklist Nộp Bài Kaggle (Offline Submission)
-
-- [x] Đã upload thư mục pre-trained weights (`mdeberta-v3-base` hoặc `phobert-base-v2`) lên Kaggle Dataset cá nhân.
-- [x] Bật thiết lập **GPU T4 x2** hoặc **GPU P100** trong Kaggle Notebook.
-- [x] **Tắt kết nối Internet** trong mục *Settings* $\to$ *Internet: Off* trước khi nộp bài.
-- [x] Kiểm tra file `submission.csv` được sinh ra đúng tên cột (`id`, `prediction`), đủ số dòng tương ứng với `test.csv` và không chứa giá trị `NaN` hoặc `null`.
-- [x] Thời gian chạy inference toàn bộ 5 fold hoàn tất trong dưới 15 phút.

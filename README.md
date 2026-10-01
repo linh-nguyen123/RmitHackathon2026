@@ -28,12 +28,20 @@ d:\RmitHackathon2026/
 ├── security/                     # Red-teaming & Đánh giá an toàn mô hình AI (Bilingual)
 │   ├── __init__.py
 │   ├── payloads.json             # 10 payload mẫu kiểm thử Jailbreak, DAN, Prompt Injection
+│   ├── payloads_30.json          # 30 payload đối kháng đa dạng theo 5 nhóm rủi ro an toàn
 │   ├── payload_catalog.py        # Quản lý lọc, tra cứu và bổ sung payload đối kháng
 │   ├── perturbations.py          # Engine sinh đột biến (Zero-width, Lookalike, Teencode, Leet)
-│   └── evaluator.py              # Đánh giá Attack Success Rate (ASR) & độ suy giảm ROC-AUC
+│   ├── evaluator.py              # Đánh giá Attack Success Rate (ASR) & độ suy giảm ROC-AUC
+│   └── benchmark_30_payloads_report.json # Báo cáo benchmark định lượng tự động
 │
 ├── prototyping/                  # Giao diện Demo tương tác cho buổi Pitching
 │   └── index.html                # Single-file HTML5 + Tailwind CSS + Alpine.js + Chart.js
+│
+├── tests/                        # Bộ kiểm thử tự động (Unit & Integration tests)
+│   ├── test_30_payloads.py       # Benchmark 30 payloads đối kháng trước & sau lọc
+│   ├── test_adversarial.py       # Kiểm thử các vector tấn công và payload catalog
+│   ├── test_cleaner.py           # Kiểm thử pipeline làm sạch văn bản tiếng Việt
+│   └── test_evasion_prompts.py   # Kiểm thử từng nhóm kỹ thuật né tránh (Evasion)
 │
 ├── requirements.txt              # Danh mục thư viện phụ thuộc
 └── README.md
@@ -150,6 +158,15 @@ print(f"Loaded {len(jailbreaks)} DAN payloads.")
 
 ### 6. Trải nghiệm Demo Giao diện Web (Prototyping)
 Mở trực tiếp tệp [`prototyping/index.html`](file:///d:/RmitHackathon2026/prototyping/index.html) bằng bất kỳ trình duyệt nào (Google Chrome, Microsoft Edge, Firefox). Không yêu cầu chạy server Node.js hay npm run build.
+
+### 7. Chạy Benchmark 30 Payloads Đối Kháng Mới
+```bash
+# Chạy bộ đo lường benchmark trên 30 payloads và xuất báo cáo:
+python tests/test_30_payloads.py
+
+# Hoặc chạy toàn bộ 14 bài kiểm thử bằng pytest:
+pytest tests/ -v
+```
 
 ---
 

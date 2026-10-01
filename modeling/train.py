@@ -22,6 +22,22 @@ from .dataset import TextDataset, create_stratified_folds
 from .model import get_model_and_tokenizer
 from .metrics import compute_roc_auc, compute_eval_metrics
 
+try:
+    from security.evaluator import RedTeamingCallback
+except (ImportError, ValueError):
+    try:
+        from ..security.evaluator import RedTeamingCallback
+    except (ImportError, ValueError):
+        RedTeamingCallback = None
+
+try:
+    from preprocessing.cleaner import clean_text
+except (ImportError, ValueError):
+    try:
+        from ..preprocessing.cleaner import clean_text
+    except (ImportError, ValueError):
+        clean_text = None
+
 
 class KFoldTrainer:
     """
@@ -29,7 +45,12 @@ class KFoldTrainer:
     checkpointing best weights per fold, and computing out-of-fold metrics.
     """
 
-    def __init__(self, model_config: ModelConfig, training_config: TrainingConfig):
+    def __init__(
+        self,
+        model_config: ModelConfig,
+        training_config: TrainingConfig,
+        red_team_callback: Optional[Any] = "auto",
+    ):
         self.model_cfg = model_config
         self.train_cfg = training_config
 
@@ -49,6 +70,15 @@ class KFoldTrainer:
         np.random.seed(self.train_cfg.seed)
 
         os.makedirs(self.train_cfg.output_dir, exist_ok=True)
+
+        # Initialize automatic Red-Teaming Callback
+        if red_team_callback == "auto" and RedTeamingCallback is not None:
+            self.red_team_callback = RedTeamingCallback(
+                output_dir=self.train_cfg.output_dir,
+                clean_fn=clean_text,
+            )
+        else:
+            self.red_team_callback = red_team_callback
 
     def _get_optimizer_and_scheduler(self, model, num_training_steps: int):
         no_decay = ["bias", "LayerNorm.weight", "layer_norm.weight"]
@@ -226,6 +256,28 @@ class KFoldTrainer:
 
         # Save tokenizer once
         tokenizer.save_pretrained(self.train_cfg.output_dir)
+
+        # Automatic Red-Teaming stress test on the best fold checkpoint
+        if self.red_team_callback is not None:
+            try:
+                if os.path.exists(best_model_path):
+                    model.load_state_dict(torch.load(best_model_path, map_location=self.device))
+
+                def fold_predict_fn(texts: list) -> np.ndarray:
+                    model.eval()
+                    ds = TextDataset(texts, tokenizer=tokenizer, max_length=self.model_cfg.max_length)
+                    dl = DataLoader(ds, batch_size=self.train_cfg.eval_batch_size, shuffle=False, num_workers=0)
+                    _, probs = self.evaluate(model, dl)
+                    return probs
+
+                self.red_team_callback.on_fold_end(
+                    fold=fold,
+                    predict_fn=fold_predict_fn,
+                    val_texts=val_texts,
+                    val_labels=val_labels,
+                )
+            except Exception as e:
+                print(f"  ⚠️  [Red-Teaming Callback Warning]: {e}")
 
         # Cleanup memory
         del model, optimizer, scheduler, train_loader, val_loader

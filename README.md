@@ -93,11 +93,11 @@ d:\RmitHackathon2026/
 │
 ├── security/                     # Red-teaming & Đánh giá an toàn mô hình AI (Bilingual)
 │   ├── __init__.py
-│   ├── payloads.json             # 10 payload mẫu kiểm thử Jailbreak, DAN, Prompt Injection
-│   ├── payloads_30.json          # 30 payload đối kháng đa dạng theo ma trận 5 nhóm rủi ro an toàn
+│   ├── payloads.json             # 30 payload đối kháng mở rộng kiểm thử 5 nhóm rủi ro an toàn
+│   ├── payloads_30.json          # Bộ 30 payload dự phòng chuẩn hóa
 │   ├── payload_catalog.py        # Quản lý lọc, tra cứu và bổ sung payload đối kháng
 │   ├── perturbations.py          # Engine sinh 9 đột biến (Zero-width, Homoglyphs, Teencode, Leet, DAN)
-│   ├── evaluator.py              # Đánh giá Attack Success Rate (ASR) & độ suy giảm ROC-AUC
+│   ├── evaluator.py              # Đánh giá Attack Success Rate (ASR) & RedTeamingCallback cho train.py
 │   └── benchmark_30_payloads_report.json # Báo cáo benchmark định lượng tự động xuất ra JSON
 │
 ├── prototyping/                  # Giao diện Demo tương tác phục vụ buổi Pitching
@@ -109,6 +109,7 @@ d:\RmitHackathon2026/
 │   ├── test_cleaner.py           # Kiểm thử pipeline làm sạch văn bản tiếng Việt (TC01 - TC05)
 │   └── test_evasion_prompts.py   # Kiểm thử từng nhóm kỹ thuật né tránh (Evasion Prompts)
 │
+├── check_kaggle_dataset.py       # Script kiểm tra chẩn đoán môi trường Kaggle Offline 100%
 ├── requirements.txt              # Danh mục thư viện phụ thuộc
 └── README.md
 ```
@@ -289,6 +290,15 @@ python tests/test_30_payloads.py
 
 # Chạy toàn bộ 14 unit & integration test cases bằng pytest:
 pytest tests/ -v
+```
+
+### 8. Kiểm Tra Môi Trường Kaggle Offline (Pre-Submission Diagnostic)
+```bash
+# Chạy chẩn đoán toàn diện môi trường offline trước khi nộp bài:
+python check_kaggle_dataset.py
+
+# Kiểm tra đường dẫn dataset weights cụ thể và file submission.csv:
+python check_kaggle_dataset.py --model-dir /kaggle/input/mdeberta-v3-base --check-submission submission.csv
 ```
 
 ---
